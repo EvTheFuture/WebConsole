@@ -181,7 +181,7 @@ String WebConsole::getConsolePage() const {
 }
 
 String WebConsole::getConsoleScript() const {
-return "var socket;\n"
+  return "var socket;\n"
        "var commandHistory = [];\n"
        "var commandIndex = -1;\n"
        "var currentTypedCommand = \"\";\n"
@@ -205,11 +205,19 @@ return "var socket;\n"
        "  var commandInput = document.getElementById('command-input');\n"
        "  if (event.key === 'Enter') {\n"
        "    sendCommand();\n"
-       "  } else if (event.key === 'ArrowUp') {\n"
-       "    if (commandIndex === -1) { currentTypedCommand = commandInput.value; }\n"
-       "    if (commandIndex < commandHistory.length - 1) { commandIndex++; commandInput.value = commandHistory[commandIndex]; }\n"
-       "  } else if (event.key === 'ArrowDown') {\n"
-       "    if (commandIndex > -1) { commandIndex--; commandInput.value = commandIndex === -1 ? currentTypedCommand : commandHistory[commandIndex]; }\n"
+       "  } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {\n"
+       "    event.preventDefault();\n"
+       "    if (event.key === 'ArrowUp') {\n"
+       "      if (commandIndex === -1) { currentTypedCommand = commandInput.value; }\n"
+       "      if (commandIndex < commandHistory.length - 1) { commandIndex++; }\n"
+       "    } else {\n"
+       "      if (commandIndex > -1) { commandIndex--; }\n"
+       "    }\n"
+       "    commandInput.value = commandIndex === -1 ? currentTypedCommand : commandHistory[commandIndex];\n"
+       "    setTimeout(function() {\n"
+       "      commandInput.focus();\n"
+       "      commandInput.selectionStart = commandInput.selectionEnd = commandInput.value.length;\n"
+       "    }, 0);\n"
        "  }\n"
        "}\n\n"
        "function sendCommand() {\n"
@@ -223,4 +231,3 @@ return "var socket;\n"
        "}\n\n"
        "connectWebSocket();\n";
 }
-
