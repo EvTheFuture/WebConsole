@@ -173,7 +173,7 @@ String WebConsole::getConsolePage() const {
         "<head>\n"
         "<script src='/script.js'></script>\n"
         "</head>\n"
-        "<body style='background: #404040; color: #fff;' onLoad='document.getElementById(\"command-input\").addEventListener(\"keydown\", handleKeyPress);'>\n"
+        "<body style='background: #404040; color: #fff;' onLoad='init();'>\n"
         "<textarea id='debug-output' style='width:100%; height:90vh; background: #202020; color: #fff;'>" + getBuffer() + "</textarea><br>\n"
         "<input type='text' id='command-input'><button onclick='sendCommand()'>Send</button>\n"
         "</body>\n"
@@ -228,6 +228,11 @@ String WebConsole::getConsoleScript() const {
        "  if (commandHistory.length > historySize) { commandHistory.pop(); }\n"
        "  commandIndex = -1;\n"
        "  currentTypedCommand = \"\";\n"
+       "}\n\n"
+       "function init() {\n"
+       "  var input = document.getElementById('command-input');\n"
+       "  input.addEventListener('keydown', handleKeyPress);\n"
+       "  input.focus();\n"
        "}\n\n"
        "connectWebSocket();\n";
 }
