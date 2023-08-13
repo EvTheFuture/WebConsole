@@ -1,0 +1,13 @@
+# Keywords for WebConsole library
+################################
+WebConsole	KEYWORD1
+registerCommandCallback	KEYWORD2
+getConsolePage	KEYWORD2
+getConsoleScript	KEYWORD2
+getBuffer	KEYWORD2
+begin	KEYWORD2
+setEpoch	KEYWORD2
+loop	KEYWORD2
+print	KEYWORD2
+println	KEYWORD2
+printf	KEYWORD2
