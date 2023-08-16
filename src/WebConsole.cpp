@@ -76,17 +76,27 @@ void WebConsole::logInternal(const String &message, bool newline) {
   if (lastCallHadNewLine) {
     // Add timestamp to the message
     String timestamp = "[" + getFormattedTime() + "] ";
+#ifdef ESP32
+    timestamp += "[" + String(xPortGetCoreID()) + "] ";
+#endif
     timestampedMessage = timestamp + message;
   } else {
     timestampedMessage = message;
   }
 
   if (serialOutputEnabled) {
-      // Send the message to Serial
-      Serial.print(message);
-      if (newline) {
-        Serial.println();
-      }
+#ifdef ESP32
+    if (lastCallHadNewLine) {
+      Serial.print("[");
+      Serial.print(xPortGetCoreID());
+      Serial.print("] ");
+    }
+#endif
+    // Send the message to Serial
+    Serial.print(message);
+    if (newline) {
+      Serial.println();
+    }
   }
 
   // Update the newline state
