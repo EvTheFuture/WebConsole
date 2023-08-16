@@ -154,7 +154,9 @@ void WebConsole::handleWebSocketEvent(uint8_t num, WStype_t type, uint8_t * pl, 
         if (commandCallback != nullptr) {
           String response = commandCallback(payload);
           String timestamp = "[" + getFormattedTime() + "] ";
-
+#ifdef ESP32
+          timestamp += "[" + String(xPortGetCoreID()) + "] ";
+#endif
           if (response != nullptr && response.length() > 0)
             webSocket.sendTXT(num, timestamp + response.c_str());
           else
