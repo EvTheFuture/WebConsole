@@ -36,7 +36,7 @@ void WebConsole::setEpoch(unsigned long epoch) {
 void WebConsole::loop() {
   webSocket.loop();
 
-  // Adjust deta if millis() wrap around (after 49 days)
+  // Adjust delta if millis() wrap around (after 49 days)
   if (lastMillis > millis())
       epochDelta += 4294967;
 
