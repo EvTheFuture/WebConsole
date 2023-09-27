@@ -133,8 +133,17 @@ void WebConsole::logInternal(const String &message, bool newline) {
   webSocket.broadcastTXT(broadcastMessage.c_str());
 }
 
-void WebConsole::handleWebSocketEvent(uint8_t num, WStype_t type, uint8_t * pl, size_t length) {
+void WebConsole::handleWebSocketEvent(uint8_t num, WStype_t type, uint8_t* pl, size_t length) {
+#ifdef ESP32
   String payload = String(pl, length);
+#else
+  char p[length+1];
+  for (int i=0; i<length; i++)
+      p[i] = (char)pl[i];
+
+  p[length] = 0;
+  String payload = String(p);
+#endif
 
   switch (type) {
     case WStype_DISCONNECTED:
@@ -153,14 +162,17 @@ void WebConsole::handleWebSocketEvent(uint8_t num, WStype_t type, uint8_t * pl, 
         this->printf("[%u] Received Command: '%s'\n", num, payload);
         if (commandCallback != nullptr) {
           String response = commandCallback(payload);
-          String timestamp = "[" + getFormattedTime() + "] ";
+          String line = "[" + getFormattedTime() + "] ";
 #ifdef ESP32
-          timestamp += "[" + String(xPortGetCoreID()) + "] ";
+          line += "[" + String(xPortGetCoreID()) + "] ";
 #endif
-          if (response != nullptr && response.length() > 0)
-            webSocket.sendTXT(num, timestamp + response.c_str());
-          else
-            webSocket.sendTXT(num, timestamp + "DONE");
+          if (response != nullptr && response.length() > 0) {
+            line += response.c_str();
+            webSocket.sendTXT(num, line);
+          } else {
+            line += "DONE";
+            webSocket.sendTXT(num, line);
+          }
         }
       }
       break;
